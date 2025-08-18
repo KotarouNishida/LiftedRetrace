@@ -10,7 +10,7 @@ It aims to improve quantitative nanoscale measurements of metal corrosion.
 - Example scripts for data analysis and visualization
 
 **Requirements**
-- LabVIEW 2023 or later
+- LabVIEW 2025
 - FPGA hardware compatible with the LabVIEW project
 - Windows 10/11
 
@@ -41,7 +41,7 @@ MIT License (for demonstration purposes)
 - データ解析用スクリプトの提供
 
 **動作環境**
-- LabVIEW 2023 以降
+- LabVIEW 2025
 - FPGA ボード（LabVIEW プロジェクトに対応）
 - Windows 10/11
 
