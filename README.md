@@ -1,4 +1,5 @@
 # AFM Lifted Retrace Control Software
+
 ## Overview (English)
 This repository contains the software developed for controlling an Atomic Force Microscope (AFM) using a novel "Lifted Retrace" scanning method.  
 It aims to improve quantitative nanoscale measurements of metal corrosion.  
@@ -18,8 +19,9 @@ It aims to improve quantitative nanoscale measurements of metal corrosion.
 For demonstration, see `/docs` for figures and analysis examples.
 
 **Results / Documentation**
-- Figures: `/docs/figures` (example AFM scans)
-- Paper PDF: `/docs/AFM_study.pdf`
+- Figures (AFM scans):  
+  ![Example Scan](docs/figures/example_scan.png)  
+- Paper PDF: [AFM Study](docs/AFM_study.pdf)
 
 **Author Contribution**
 I was responsible for FPGA programming, implementing the lifted retrace method, and creating data analysis scripts.
@@ -48,11 +50,13 @@ MIT License (for demonstration purposes)
 動作確認用に、図や解析例は `/docs` にまとめています。
 
 **成果物**
-- 図: `/docs/figures` （AFM走査例）
-- 論文PDF: `/docs/AFM_study.pdf`
+- 図:  
+  ![走査例](docs/figures/example_scan.png)  
+- 論文PDF: [AFM研究資料](docs/AFM_study.pdf)
 
 **担当部分**
 FPGA プログラミング、リフテッドリトレースの実装、データ解析スクリプト作成を担当しました。
 
 **ライセンス**
 MIT ライセンス（デモンストレーション目的）
+
