@@ -72,7 +72,7 @@ FPGAとHostの役割分担を明確にし、計測制御から信号処理まで
 各設計内容の詳細は以下に整理しています。
 
 - 01_System_Design：仕様策定および測定制御設計
-- 02_FPGA_Design：走査回路・DMA構造設計
-- 03_Control_Software：Host側データパイプライン設計
-- 04_Signal_Processing：長距離力除去アルゴリズム
-- 05_Validation：評価結果
+- 02_FPGA_Design/02_Scan_Control_FPGA/：走査回路
+- 02_FPGA_Design/03_Signal_Control_FPGA/：探針制御モード切替回路の設計・サンプリングレート向上を目的としたDMA転送構造の設計
+- 03_Host_Control_Software：ユーザインタフェース設計・データ取得・処理・表示・保存モジュールの開発・長距離力除去補正機能の実装
+- 04_Validation：評価結果
