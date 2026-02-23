@@ -1,62 +1,199 @@
-# AFM Lifted Retrace Control Software
+# 計測精度向上のための測定制御サブシステム開発
 
-## Overview (English)
-This repository contains the software developed for controlling an Atomic Force Microscope (AFM) using a novel "Lifted Retrace" scanning method.  
-It aims to improve quantitative nanoscale measurements of metal corrosion.  
+## 概要
 
-**Key Features**
-- LabVIEW-based FPGA control for real-time probe scanning
-- Implementation of the lifted retrace method to separate topography and secondary signals
-- Example scripts for data analysis and visualization
+本プロジェクトでは、既存の2D計測基盤に対し、計測精度向上を目的とした測定制御サブシステムの設計・実装を行いました。
 
-**Requirements**
-- LabVIEW 2025
-- FPGA hardware compatible with the LabVIEW project
-- Windows 10/11
+特に、リトレース過程におけるフォースカーブ取得不良という課題に対し、信号観測機構の実装から判定ロジックの再設計、DMA転送構造の再構築まで踏み込み、短距離力成分を正しく取得可能な測定制御構造を実現しました。
 
-**Usage**
-⚠️ This software requires specific AFM hardware and cannot operate independently.  
-For demonstration, see `/docs` for figures and analysis examples.
-
-**Results / Documentation**
-- Figures (AFM scans):  
-  ![Example Scan](docs/figures/example_scan.png)  
-- Paper PDF: [AFM Study](docs/AFM_study.pdf)
-
-**Author Contribution**
-I was responsible for FPGA programming, implementing the lifted retrace method, and creating data analysis scripts.
-
-**License**
-MIT License (for demonstration purposes)
+要件定義からFPGA回路設計、Host側ソフトウェア開発、信号処理、評価までを一貫して担当しています。
 
 ---
 
-## 概要 (日本語)
-本リポジトリは、原子間力顕微鏡（AFM）の制御ソフトウェアをまとめたものです。  
-定量性向上のため、新規走査手法「リフテッドリトレース」を実装しています。
+## 背景
 
-**主な特徴**
-- LabVIEW FPGA によるリアルタイム探針制御
-- トポグラフィー情報と二次信号の分離を可能にするリフテッドリトレース手法の実装
-- データ解析用スクリプトの提供
+OL-EPM（Open Loop Electric Potential Microscopy）は、金属表面の電位分布をナノスケールで可視化する計測装置です。
 
-**動作環境**
-- LabVIEW 2025
-- FPGA ボード（LabVIEW プロジェクトに対応）
-- Windows 10/11
+しかし、液中計測では長距離力由来の誤差成分が混入し、計測精度に課題がありました。
 
-**使用方法**
-⚠️ 特定の AFM ハードウェアが必要です。  
-動作確認用に、図や解析例は `/docs` にまとめています。
+既存コントローラでは通常の2D計測は可能でしたが、
 
-**成果物**
-- 図:  
-  ![走査例](docs/figures/example_scan.png)  
-- 論文PDF: [AFM研究資料](docs/AFM_study.pdf)
+- ノイズ成分を定量的に取得する仕組み
+- フォースカーブを安定取得する構造
+- 取得したノイズを補正に反映する機構
 
-**担当部分**
-FPGA プログラミング、リフテッドリトレースの実装、データ解析スクリプト作成を担当しました。
+は備わっていませんでした。
 
-**ライセンス**
-MIT ライセンス（デモンストレーション目的）
+---
 
+## 目的 
+
+本開発の目的は、計測精度向上のために以下を実現することでした。
+
+- ノイズ成分を取得可能な測定モードの構築
+- フォースカーブの安定取得
+- 長距離力補正機構の実装
+- 高速かつ高解像度なデータ取得構造の確立
+
+---
+
+## システム構成
+
+既存の2D計測基盤（FPGA + Host PC）をベースに、以下の拡張を実装しました。
+
+### FPGA側
+
+- リトレース計測モード追加
+- 信号成形回路
+- 持続判定ロジック
+- リングバッファによる信号観測機構
+- 高速DMA転送構造
+
+### Host_PC側
+
+- データ取得ループ設計
+- 処理・表示・保存モジュール設計
+- フォースカーブ可視化機能
+- 長距離力補正アルゴリズム実装
+
+---
+
+## 技術的課題：フォースカーブ取得不良
+
+### 発生した問題
+
+リトレース過程でフォースカーブ計測を行った際、
+
+- 長距離力成分のみが反映される
+- 短距離力成分が取得できない
+
+という問題が発生しました。
+
+この問題は、計測精度向上の根幹に関わる重大な課題でした。
+
+---
+
+### 初期調査・対策
+
+まず、
+
+- FPGAおよびHost回路構成の見直し
+- パラメータ調整
+
+を実施しました。
+
+一定の改善は見られましたが、根本的な解決には至りませんでした。
+
+---
+
+### 根本原因の特定
+
+問題の本質を把握するため、FPGA上にリングバッファを実装し、クロックレベルで信号を観測しました。
+
+その結果、
+
+- 本来検出すべき信号ではなく
+- 雑音信号によって判定が行われている
+
+ことを特定しました。
+
+---
+
+### 測定制御構造の再設計
+
+原因特定後、測定制御構造を再設計しました。
+
+#### 1. 判定ロジック再設計
+
+- 信号成形回路の設計
+- 持続判定回路の実装
+- 雑音による誤判定の抑制
+
+#### 2. サンプリング構造の再設計
+
+フォースカーブのサンプリング数不足が短距離力成分欠落の一因であると判断し、
+
+- DMA転送構造を再設計
+- サンプリングレートを向上
+
+させました。
+
+#### 3. Host側パイプライン再構築
+
+- 高速データ取得ループ
+- 処理ループ
+- 表示・保存モジュール
+
+を新規設計し、データフロー全体を再構築しました。
+
+---
+
+## 信号処理設計
+
+取得したノイズ成分に対し、
+
+- ライン単位補正
+- 長距離力除去処理
+- 多項式近似による平滑化
+
+を実装しました。
+
+これにより、補正後の電位像の安定性を向上させました。
+
+---
+
+## 評価・検証
+
+以下の観点で検証を実施しました。
+
+- フォースカーブの安定取得
+- 短距離力成分の再現性
+- 補正前後の電位像比較
+
+結果として、短距離力成分を含むフォースカーブ取得が可能となり、計測精度向上を確認しました。
+
+---
+
+## 担当範囲
+
+本プロジェクトにおいて、以下を一貫して担当しました。
+
+- 要件定義
+- 測定シーケンス設計
+- FPGA回路設計
+- 判定ロジック設計
+- DMA構造設計
+- Hostソフトウェア開発
+- 信号処理アルゴリズム実装
+- 評価・検証
+
+既存基盤上での拡張ではありますが、計測精度向上の観点から測定制御構造を再設計しました。
+
+---
+
+## 技術的成果
+
+- 計測精度向上のための測定制御サブシステム設計
+- フォースカーブ取得構造の再設計
+- リングバッファによる信号観測機構の実装
+- 持続判定ロジックによる誤検出抑制
+- 高速DMA転送設計
+- 長距離力補正アルゴリズム実装
+
+---
+
+## センサー評価装置開発との関連性
+
+本プロジェクトでは、
+
+- 測定制御構造設計
+- FPGA設計
+- 制御ソフト開発
+- 高速データ取得設計
+- 信号処理
+- 評価検証
+
+を横断的に行いました。
+
+これは、センサー評価装置開発に必要とされる
+システム設計・制御設計・測定技術と直結しています。
