@@ -1,26 +1,32 @@
 # 01_Architecture Overview
 
-## 1. 本章の位置づけ
+## 0. 本章の位置づけ
 
-本章では、本システムにおける FPGA アーキテクチャの全体像を示します。
+本章では、01_System_Design で定義した
+リフテッドリトレース方式を実現するための
+評価システム設計について説明します。
 
-計測システム全体の構成および動作シーケンスについては  
-`01_System_Design` にて説明しています。
-
-本章ではそれを前提とし、FPGA がどのような機能を担っているかに焦点を当てます。
+具体的には、FPGAおよびHost PCを用いて
+どのように各機能を構成し、
+リフテッドリトレース方式を実装したのかを示します。
 
 ---
 
-## 2. FPGA 全体構成
 
-![Architecture Overview](../Figures/Architecture_Overview.png)
+## 1. FPGAおよびHost-PCの全体構成
 
-本システムでは、2 つの FPGA を用いて構成されています。
+本評価システムは、以下の3要素から構成されます。
 
-- **Scan-Control-FPGA**
-- **Signal-Process-FPGA**
+- Scan-Control-FPGA
+- Signal-Process-FPGA
+- Host PC
 
-両 FPGA は P2P 通信で接続され、それぞれ異なる役割を担っています。
+各構成要素は明確に役割分担されており、
+リアルタイム制御系（FPGA）と、
+設定・取得・解析系（Host PC）に分離されています。
+
+
+![Architecture Overview](../Figures/Architecture_Overview.png)  
 
 ---
 
@@ -62,11 +68,22 @@ Signal-Process-FPGA は、信号処理および状態判定を担う FPGA です
 
 ---
 
-## 5. 後続章との関係
+## 5. Host-PC の役割
 
-本章では FPGA の役割分担のみを示しました。
+Host-PC は、ユーザーインタフェースおよびデータ生成を担います。
 
-詳細な設計内容については、以下でそれぞれ説明します。
+主な機能は以下の通りです。
 
-- `02_Scan_Control_FPGA`
-- `03_Signal_Control_FPGA`
+- 計測モードおよび走査条件の設定
+- FPGA へのパラメータ書き込み
+- DMA データの取得
+- 計測データの表示および保存
+- 長距離力除去補正処理
+
+本 Host-PC は、
+
+> 計測条件を定義し、取得データを処理・表示・保存を行うモジュール
+
+として機能します。
+
+---
