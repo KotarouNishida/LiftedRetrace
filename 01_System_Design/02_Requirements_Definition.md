@@ -1,4 +1,4 @@
-# 02_Requirements_Definition.md
+# 02_Requirements_Definition
 
 ## 1. 要求定義の目的
 
