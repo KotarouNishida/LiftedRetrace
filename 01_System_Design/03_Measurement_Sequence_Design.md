@@ -1,4 +1,4 @@
-# 03_Measurement_Sequence_Design.md
+# 03_Measurement_Sequence_Design
 
 ## 1. 計測システムの全体構成
 
