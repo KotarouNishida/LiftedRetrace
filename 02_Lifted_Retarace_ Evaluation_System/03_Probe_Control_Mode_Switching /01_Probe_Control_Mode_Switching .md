@@ -1,4 +1,4 @@
-# 01_Probe_Control_Mode_Switching.md
+# 01_Probe_Control_Mode_Switching
 
 ## 1. 概要
 
